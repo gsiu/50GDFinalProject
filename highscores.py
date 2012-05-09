@@ -1,4 +1,4 @@
-import pygame, sys, random, time, pickle
+import pygame, sys, random, time, cPickle
 from pygame.locals import *
 from random import *
 
@@ -101,33 +101,33 @@ def scores(screen):
     ################3333
 
     if android:
-        filename = "highscores.text"
+        filename = "highscores.txt"
     else:
         filename = "highscores.txt"        
 
 
-    highscores = [0, 0, 0, 0, 0, 0, 0, 0]
+    highscores = [("",0),("",0), ("",0), ("",0), ("",0), ("",0), ("",0), ("",0) ]
     try: # If there is already a highscores file, try opening it
         f = open(filename, "r+")
     except IOError: # If there is no highscores file, create one and add 0's to it
         f = open(filename, "w+")
-        pickle.dump(highscores, f)
+        cPickle.dump(highscores, f)
         f.seek(0)
 
-    highscores = pickle.load(f)
+    highscores = cPickle.load(f)
 
     f.close()
-    highscores.sort()
-    highscores.reverse()
+    #highscores.sort()
+    #highscores.reverse()
 
     # Fonts
-    font = pygame.font.Font("Baby Universe Italic.ttf", 40)
+    font = pygame.font.Font("Baby Universe Italic.ttf", 30)
    
     
     score_text = []
     for i in range(len(highscores)):
-        a = str(i + 1) + ".  " + str(highscores[i])
-        score_text.append(font.render(a, 1, (50, 0, 0)))
+        a =  str(highscores[i][1]) + " by " +(highscores[i][0])
+        score_text.append(font.render(a, 1, (100, 20, 0)))
     score_height = score_text[0].get_rect()[3]
     score_rect = []
     for i in range(len(highscores)):
