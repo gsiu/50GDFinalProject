@@ -1,6 +1,7 @@
-import pygame, sys, random, time, pickle
+import pygame, sys, random, time, cPickle, operator
 from pygame.locals import *
 from random import *
+from operator import itemgetter
 
 
 
@@ -63,25 +64,34 @@ def main():
             t = game(screen)
             score = score + int(t)
             if android:
-                filename = "highscores.text"
+                filename = "highscores.txt"
             else:
                 filename = "highscores.txt" 
-            highscore = [0, 0, 0, 0, 0, 0, 0, 0]
+            highscore = [("",0), ("",0), ("",0), ("",0), ("",0), ("",0), ("",0), ("",0)]
             try: # If there is already a highscores file, try opening it
                 f = open(filename, "r+")
             except IOError: # If there is no highscores file, create one and add 0's to it
                 f = open(filename, "w+")
-                pickle.dump(highscore, f)
+                cPickle.dump(highscore, f)
                 f.seek(0)
             try:
-                    highscore = pickle.load(f)
+  
+                highscore = cPickle.load(f)
+                
             except EOFError:
                     pass # Just don't load anything
-
+            username = "Anonymous"
+            if android:
+               # android.show_keyboard()
+                username = raw_input("Enter name: ")
+               # android.hide_keyboard()
             # Add the new highscore if it is high enough
-            highscore.append(score)
-            highscore.sort()
-            highscore.reverse()
+            newscore = (username, score)
+            highscore.append(newscore)
+            print highscore
+            highscore = sorted(highscore, key=itemgetter(1), reverse = True)
+            
+            print highscore
             del highscore[-1]
            
 
@@ -90,9 +100,11 @@ def main():
             f = open(filename, "w+")
 
             # Write the new high score table
-            pickle.dump(highscore, f)
+            cPickle.dump(highscore, f)
             f.close()
             levelNum = 0
+            score = 0
+            username = "Anonymous"
           
             
         # Flip the display
