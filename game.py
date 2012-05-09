@@ -69,10 +69,8 @@ class Balloon (pygame.sprite.Sprite):
         
         self.image = pygame.transform.scale (load_image(image_file), (100, 200))
         self.rect = self.image.get_rect()
-        self.rect.move(self.x, self.y)
         self.rect.topleft = (self.x, self.y)
         self.image_w, self.image_h = self.image.get_size()
-        self.rect.bottomright = (self.x + self.image_w, self.y + self.image_h)
         
         self.active = True
         
@@ -88,9 +86,7 @@ class Balloon (pygame.sprite.Sprite):
             self.dy = self.dy * -1
         self.x = self.x + self.dx
         self.y = self.y + self.dy
-        self.rect.move(self.x, self.y)
         self.rect.topleft = (self.x, self.y)
-        self.rect.bottomright = (self.x + self.image_w, self.y + self.image_h)
     
     def draw(self):
         '''draw the balloon in its current position'''
@@ -113,10 +109,8 @@ class Enemy(pygame.sprite.Sprite):
         
         self.image = pygame.transform.scale (load_image(image_file), (100, 50))
         self.rect = self.image.get_rect()
-        self.rect.move(self.x, self.y)
         self.rect.topleft = (self.x, self.y)
         self.image_w, self.image_h = self.image.get_size()
-        self.rect.bottomright = (self.x + self.image_w, self.y + self.image_h)
         
         self.active = True
         
@@ -127,18 +121,13 @@ class Enemy(pygame.sprite.Sprite):
         #   self.kill()
         self.x += self.dx
         self.y += self.dy
-        self.rect.move(self.x, self.y)
         self.rect.topleft = (self.x, self.y)
-        self.rect.bottomright = (self.x + self.image_w, self.y + self.image_h)
-        
     
     def draw(self):
         '''if the enemy is active, draw it to the screen'''
         if self.active:
-            self.screen.blit(self.image, (self.x, self.y))
+            self.screen.blit(self.image, self.rect)
      
-    
-    
 def game(screen):
     '''main function that runs the game'''
     pygame.init()
@@ -160,8 +149,6 @@ def game(screen):
     moveRate = 2
     
     score = 0
-    
-    background = (0, 0, 0)
     
     sky = Background(screen, scroll_speed, sky_image)
 
@@ -225,10 +212,6 @@ def game(screen):
             
             elif event.type == USEREVENT + 2 and score>=10: 
                 airplanes.add(Enemy(screen, init_x, -50, randint(1, 5), randint(1, 5), enemy_image)) 
-
-                
-                
-        screen.fill(background)
         
         sky.update()
         sky.draw()
@@ -242,7 +225,8 @@ def game(screen):
         for enemy in airplanes:
             if pygame.sprite.collide_mask(enemy, balloon):
                 # ADD GAME OVER SCREEN HERE
-                android.vibrate(1)
+				if android:
+					android.vibrate(1)
                 return score
             enemy.update()
             enemy.draw()
