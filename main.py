@@ -16,19 +16,11 @@ try:
     import pygame.mixer as mixer    
 except ImportError:
     import android.mixer as mixer
-    
-# Event constant.
-TIMEREVENT = pygame.USEREVENT
 
-# The FPS the game runs at.
-FPS = 35
+if android:
+    android.init()
 
-# Screen constants
-SCREEN_WIDTH, SCREEN_HEIGHT = 480, 800
-SCREENRECT = Rect(0, 0, 480, 800)
-
-if __name__ == "__main__":
-
+def main():
     # Check if sound and font are supported
     if not pygame.font:
         print "Warning, fonts disabled"
@@ -37,6 +29,7 @@ if __name__ == "__main__":
     # Constants
     FPS = 35
     SCREEN_WIDTH, SCREEN_HEIGHT = 480, 800
+    SCREENRECT = Rect(0, 0, 480, 800)
     SPEED = 5
     BACKGROUND_COLOR = (0, 0, 0)
     
@@ -73,3 +66,5 @@ if __name__ == "__main__":
             
         # Flip the display
         pygame.display.flip()
+if __name__ == "__main__":
+    main()

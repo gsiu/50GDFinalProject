@@ -11,7 +11,7 @@ try:
     import pygame.mixer as mixer    
 except ImportError:
     import android.mixer as mixer
-    
+
 # Event constant.
 TIMEREVENT = pygame.USEREVENT
 
@@ -253,4 +253,4 @@ def game(screen):
 
 
 if __name__ == "__main__":
-    main()
+    game(screen)
