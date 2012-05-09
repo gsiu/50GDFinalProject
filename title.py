@@ -145,8 +145,6 @@ def title(screen):
         #game loop
         time_passed = clock.tick(FPS)
         
-        text = font.render("Score: " + str(score), 1, (0, 0, 0)) #render score
-        
         if android:
 
             if android.check_pause():
