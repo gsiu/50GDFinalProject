@@ -96,7 +96,7 @@ class Balloon (pygame.sprite.Sprite):
             
             
 class Enemy(pygame.sprite.Sprite):
-    def __init__(self, screen, init_x, init_y, dx, dy, image_file, height, width):
+    def __init__(self, screen, init_x, init_y, dx, dy, image_file, (height, width), numrows, numcols):
         '''initialize the enemy sprite'''
         pygame.sprite.Sprite.__init__(self)
         
@@ -108,10 +108,25 @@ class Enemy(pygame.sprite.Sprite):
         self.dx = dx
         self.dy = dy
         
-        self.image = pygame.transform.scale(load_image(image_file), (height, width))
-        self.rect = self.image.get_rect()
+        self.sheet = load_image(image_file)
+        self.frame = []
+        self.frame_index = 0        
+        
+        # Get the image's width and height
+        self.image_w, self.image_h = self.sheet.get_size()[0] / numrows, self.sheet.get_size()[1] / numcols
+        
+        for i in range(numrows * numcols):
+            self.frame.append(pygame.transform.scale(load_image(image_file), (height, width)))
+            
+        
+        # Load each frame as a subsurface in animation
+        for j in range(numcols):
+            for i in range(numrows):
+                self.frame.append(pygame.transform.scale(self.sheet.subsurface(Rect(i * self.image_w, j, self.image_w, self.image_h)), (height, width)))
+        
+        self.image = self.frame[self.frame_index]
+        self.rect = self.frame[self.frame_index].get_rect()
         self.rect.topleft = (self.x, self.y)
-        self.image_w, self.image_h = self.image.get_size()
         
         self.active = True
         
@@ -122,6 +137,8 @@ class Enemy(pygame.sprite.Sprite):
            self.active = False
         self.x += self.dx
         self.y += self.dy
+        self.frame_index = (self.frame_index + 1) % len(self.frame)
+        self.image = self.frame[self.frame_index]
         self.rect.topleft = (self.x, self.y)
     
     def draw(self):
@@ -220,18 +237,16 @@ def game(screen):
             elif event.type == USEREVENT + 1:
                 score += 1
             elif event.type == TIMEREVENT and score>=2 and score<=10:
-                airplanes.add(Enemy(screen, init_x, randint(-50, 200), randint(1, 5), randint(1, 3), enemy_image, 100, 50))
+                airplanes.add(Enemy(screen, init_x, randint(-50, 200), randint(1, 5), randint(1, 3), enemy_image, (100, 50), 1, 1))
             
             elif event.type == USEREVENT + 2 and score>=10: 
-                airplanes.add(Enemy(screen, init_x, randint(-50, 200), randint(1, 5), randint(1, 5), enemy_image, 100, 50))
+                airplanes.add(Enemy(screen, init_x, randint(-50, 200), randint(1, 5), randint(1, 5), enemy_image, (100, 50), 1, 1))
                 
             elif event.type == USEREVENT + 3:
-                birds.add(Enemy(screen, init_x, randint(-50, SCREEN_HEIGHT + 50), randint(2,4), 0, "assets/balloon.gif", 80, 80))
+                birds.add(Enemy(screen, init_x, randint(-50, SCREEN_HEIGHT + 50), randint(2,4), 0, "assets/balloon.gif", (80, 80), 1, 1))
                 
             elif event.type == USEREVENT + 4:
-                missiles.add(Enemy(screen, randint(0, SCREEN_WIDTH), SCREEN_HEIGHT, 0, randint(-8, -3), "assets/balloon.gif", 50, 120))
-                print "missile"
-                
+                missiles.add(Enemy(screen, randint(0, SCREEN_WIDTH), SCREEN_HEIGHT, 0, randint(-8, -3), "assets/balloon.gif", (50, 120), 1, 1))
         
         sky.update()
         sky.draw()
@@ -248,8 +263,8 @@ def game(screen):
                 if android:
                     android.vibrate(1)
                 #return score
-            enemy.update()
-            enemy.draw()
+            #enemy.update()
+            #enemy.draw()
             
         for bird in birds:
             bird.dy = 6*cos(0.1*elapsed_time) + 1
@@ -258,8 +273,8 @@ def game(screen):
                 if android:
                     android.vibrate(1)
                 #return score
-            bird.update()
-            bird.draw()
+            #bird.update()
+            #bird.draw()
             
         for missile in missiles:
             if pygame.sprite.collide_mask(missile, balloon):
@@ -267,8 +282,15 @@ def game(screen):
                 if android:
                     android.vibrate(1)
                 #return score
-            missile.update()
-            missile.draw()
+            #missile.update()
+            #missile.draw()
+            
+        airplanes.update()
+        airplanes.draw(screen)
+        birds.update()
+        birds.draw(screen)
+        missiles.update()
+        missiles.draw(screen)
             
         screen.blit(text, (0,  SCREEN_HEIGHT - 30))
         pygame.display.flip()
