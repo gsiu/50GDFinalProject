@@ -1,6 +1,7 @@
 import pygame, sys, random, time
 from pygame.locals import *
 from random import *
+from math import *
 
 try:
     import android
@@ -91,7 +92,7 @@ class Balloon (pygame.sprite.Sprite):
     def draw(self):
         '''draw the balloon in its current position'''
         if self.active:
-            self.screen.blit(self.image, (self.x, self.y))
+            self.screen.blit(self.image, self.rect)
             
             
 class Enemy(pygame.sprite.Sprite):
@@ -116,7 +117,7 @@ class Enemy(pygame.sprite.Sprite):
         
     def update(self):
         '''move and update the sprite'''
-        if (self.rect.left < 0 - 3*self.image_w) or (self.rect.right > SCREEN_WIDTH + 3*self.image_w) or (self.rect.top < 0 - 2*self.image_h) or (self.rect.bottom > SCREEN_HEIGHT):
+        if (self.rect.left < 0 - 3*self.image_w) or (self.rect.right > SCREEN_WIDTH + 3*self.image_w) or (self.rect.top < 0 - 3*self.image_h) or (self.rect.bottom > SCREEN_HEIGHT + 3* self.image_h):
            self.kill()
            self.active = False
         self.x += self.dx
@@ -141,7 +142,7 @@ def game(screen):
     font = pygame.font.Font("assets/freesansbold.ttf", 30)
     try:
         mixer.music.load("assets/Scores.ogg")
-        mixer.music.play(-1)
+        #mixer.music.play(-1)
     except pygame.error:
         print "Couldn't find file."
     
@@ -162,18 +163,23 @@ def game(screen):
     pygame.time.set_timer(TIMEREVENT, 3000)
     pygame.time.set_timer(USEREVENT + 1, 1000)
     pygame.time.set_timer(USEREVENT + 2, 2000)
+    pygame.time.set_timer(USEREVENT + 3, 4000)
     
     pygame.key.set_repeat(FPS, FPS) # set key repeat on 
     
     balloon = Balloon(screen, SCREEN_WIDTH / 2 - 50, SCREEN_HEIGHT, 0, balloon_speed, "assets/balloon.gif")
     
     airplanes = pygame.sprite.Group()
+    birds = pygame.sprite.Group()
     
-    spawn_pt = range(-300, -100) + range(SCREEN_WIDTH, SCREEN_WIDTH + 200)
+    spawn_pt = range(-200, -100) + range(SCREEN_WIDTH, SCREEN_WIDTH + 100)
+    
+    elapsed_time = 0
     
     while True:
         #game loop
         time_passed = clock.tick(FPS)
+        elapsed_time += 1
         
         text = font.render("Score: " + str(score), 1, (0, 0, 0)) #render score
         
@@ -213,11 +219,13 @@ def game(screen):
                 score += 1
             elif event.type == TIMEREVENT and score>=2 and score<=10:
                 airplanes.add(Enemy(screen, init_x, randint(-50, 200), randint(1, 5), randint(1, 3), enemy_image))
-                print "new level enemy"
             
             elif event.type == USEREVENT + 2 and score>=10: 
                 airplanes.add(Enemy(screen, init_x, randint(-50, 200), randint(1, 5), randint(1, 5), enemy_image))
-                print "new other enemy"
+                
+            elif event.type == USEREVENT + 3:
+                birds.add(Enemy(screen, init_x, randint(-50, 850), randint(2,4), 0, "assets/balloon.gif"))
+                print "bird"
         
         sky.update()
         sky.draw()
@@ -227,7 +235,17 @@ def game(screen):
         if balloon.y <= SCREEN_HEIGHT / 3:
             balloon.dy = 0
             sky.scrolling = True
-            
+        
+        for bird in birds:
+            bird.dy = 6*cos(0.1*elapsed_time) + 1
+            if pygame.sprite.collide_mask(bird, balloon):
+                # ADD GAME OVER SCREEN HERE
+                if android:
+                    android.vibrate(1)
+                return score
+            bird.update()
+            bird.draw()
+        
         for enemy in airplanes:
             if pygame.sprite.collide_mask(enemy, balloon):
                 # ADD GAME OVER SCREEN HERE
@@ -242,4 +260,5 @@ def game(screen):
 
 
 if __name__ == "__main__":
+    screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), 0, 0)
     game(screen)
