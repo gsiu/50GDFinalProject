@@ -96,7 +96,7 @@ class Balloon (pygame.sprite.Sprite):
             
             
 class Enemy(pygame.sprite.Sprite):
-    def __init__(self, screen, init_x, init_y, dx, dy, image_file):
+    def __init__(self, screen, init_x, init_y, dx, dy, image_file, height, width):
         '''initialize the enemy sprite'''
         pygame.sprite.Sprite.__init__(self)
         
@@ -108,7 +108,7 @@ class Enemy(pygame.sprite.Sprite):
         self.dx = dx
         self.dy = dy
         
-        self.image = pygame.transform.scale(load_image(image_file), (100, 50))
+        self.image = pygame.transform.scale(load_image(image_file), (height, width))
         self.rect = self.image.get_rect()
         self.rect.topleft = (self.x, self.y)
         self.image_w, self.image_h = self.image.get_size()
@@ -164,6 +164,7 @@ def game(screen):
     pygame.time.set_timer(USEREVENT + 1, 1000)
     pygame.time.set_timer(USEREVENT + 2, 2000)
     pygame.time.set_timer(USEREVENT + 3, 4000)
+    pygame.time.set_timer(USEREVENT + 4, 2000)
     
     pygame.key.set_repeat(FPS, FPS) # set key repeat on 
     
@@ -171,6 +172,7 @@ def game(screen):
     
     airplanes = pygame.sprite.Group()
     birds = pygame.sprite.Group()
+    missiles = pygame.sprite.Group()
     
     spawn_pt = range(-200, -100) + range(SCREEN_WIDTH, SCREEN_WIDTH + 100)
     
@@ -218,14 +220,18 @@ def game(screen):
             elif event.type == USEREVENT + 1:
                 score += 1
             elif event.type == TIMEREVENT and score>=2 and score<=10:
-                airplanes.add(Enemy(screen, init_x, randint(-50, 200), randint(1, 5), randint(1, 3), enemy_image))
+                airplanes.add(Enemy(screen, init_x, randint(-50, 200), randint(1, 5), randint(1, 3), enemy_image, 100, 50))
             
             elif event.type == USEREVENT + 2 and score>=10: 
-                airplanes.add(Enemy(screen, init_x, randint(-50, 200), randint(1, 5), randint(1, 5), enemy_image))
+                airplanes.add(Enemy(screen, init_x, randint(-50, 200), randint(1, 5), randint(1, 5), enemy_image, 100, 50))
                 
             elif event.type == USEREVENT + 3:
-                birds.add(Enemy(screen, init_x, randint(-50, 850), randint(2,4), 0, "assets/balloon.gif"))
-                print "bird"
+                birds.add(Enemy(screen, init_x, randint(-50, SCREEN_HEIGHT + 50), randint(2,4), 0, "assets/balloon.gif", 80, 80))
+                
+            elif event.type == USEREVENT + 4:
+                missiles.add(Enemy(screen, randint(0, SCREEN_WIDTH), SCREEN_HEIGHT, 0, randint(-8, -3), "assets/balloon.gif", 50, 120))
+                print "missile"
+                
         
         sky.update()
         sky.draw()
@@ -236,24 +242,33 @@ def game(screen):
             balloon.dy = 0
             sky.scrolling = True
         
+        for enemy in airplanes:
+            if pygame.sprite.collide_mask(enemy, balloon):
+                # ADD GAME OVER SCREEN HERE
+                if android:
+                    android.vibrate(1)
+                #return score
+            enemy.update()
+            enemy.draw()
+            
         for bird in birds:
             bird.dy = 6*cos(0.1*elapsed_time) + 1
             if pygame.sprite.collide_mask(bird, balloon):
                 # ADD GAME OVER SCREEN HERE
                 if android:
                     android.vibrate(1)
-                return score
+                #return score
             bird.update()
             bird.draw()
-        
-        for enemy in airplanes:
-            if pygame.sprite.collide_mask(enemy, balloon):
+            
+        for missile in missiles:
+            if pygame.sprite.collide_mask(missile, balloon):
                 # ADD GAME OVER SCREEN HERE
                 if android:
                     android.vibrate(1)
-                return score
-            enemy.update()
-            enemy.draw()
+                #return score
+            missile.update()
+            missile.draw()
             
         screen.blit(text, (0,  SCREEN_HEIGHT - 30))
         pygame.display.flip()
