@@ -225,8 +225,8 @@ def game(screen):
         for enemy in airplanes:
             if pygame.sprite.collide_mask(enemy, balloon):
                 # ADD GAME OVER SCREEN HERE
-				if android:
-					android.vibrate(1)
+                if android:
+                    android.vibrate(1)
                 return score
             enemy.update()
             enemy.draw()
