@@ -16,7 +16,7 @@ except ImportError:
 TIMEREVENT = pygame.USEREVENT
 
 # The FPS the game runs at.
-FPS = 35
+FPS = 40
 
 # Screen constants
 SCREEN_WIDTH, SCREEN_HEIGHT = 480, 800
@@ -123,8 +123,8 @@ class Enemy(pygame.sprite.Sprite):
         
     def update(self):
         '''move and update the sprite'''
-        #if (self.x < 0) or (self.x > SCREEN_WIDTH) or (self.y <0) or (self.y > SCREEN_HEIGHT):
-        #   self.active = False
+        #if (self.rect.left < 0) or (self.rect.right > SCREEN_WIDTH) or (self.rect.top <0) or (self.rect.bottom > SCREEN_HEIGHT):
+        #   self.kill()
         self.x += self.dx
         self.y += self.dy
         self.rect.move(self.x, self.y)
@@ -180,7 +180,7 @@ def game(screen):
     
     balloon = Balloon(screen, SCREEN_WIDTH / 2 - 50, SCREEN_HEIGHT, 0, balloon_speed, "assets/balloon.gif")
     
-    enemies = []
+    airplanes = pygame.sprite.Group()
     
     while True:
         #game loop
@@ -221,10 +221,10 @@ def game(screen):
             elif event.type == USEREVENT + 1:
                 score += 1
             elif event.type == TIMEREVENT and score>=2 and score<=10:
-                enemies.append(Enemy(screen, init_x, -50, randint(0, 3), randint(0, 3), enemy_image)) 
+                airplanes.add(Enemy(screen, init_x, -50, randint(0, 3), randint(0, 3), enemy_image)) 
             
             elif event.type == USEREVENT + 2 and score>=10: 
-                enemies.append(Enemy(screen, init_x, -50, randint(1, 5), randint(1, 5), enemy_image)) 
+                airplanes.add(Enemy(screen, init_x, -50, randint(1, 5), randint(1, 5), enemy_image)) 
 
                 
                 
@@ -239,9 +239,10 @@ def game(screen):
             balloon.dy = 0
             sky.scrolling = True
             
-        for enemy in enemies:
+        for enemy in airplanes:
             if pygame.sprite.collide_mask(enemy, balloon):
                 # ADD GAME OVER SCREEN HERE
+                android.vibrate(1)
                 return score
             enemy.update()
             enemy.draw()
