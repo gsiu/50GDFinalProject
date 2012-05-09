@@ -32,7 +32,7 @@ def load_image(file_name):
     return image.convert_alpha()
 
 
-class Background (pygame.sprite.Sprite):
+class Backgrounds (pygame.sprite.Sprite):
     def __init__(self, screen, speed, image_file):
         pygame.sprite.Sprite.__init__(self)
         
@@ -69,13 +69,14 @@ class Balloons (pygame.sprite.Sprite):
         self.dy = dy
         
         self.image = pygame.transform.scale (load_image(image_file), (200, 300))
+        self.image2 = pygame.transform.scale (load_image(image2_file), (200, 300))
         self.rect = self.image.get_rect()
         self.rect.move(self.x, self.y)
         self.rect.topleft = (self.x, self.y)
         self.image_w, self.image_h = self.image.get_size()
         self.rect.bottomright = (self.x + self.image_w, self.y + self.image_h)
         
-        self.active = True
+        self.active = False
         
     def update(self):
         '''update the balloon and check to make sure it hasn't moved off the screen'''
@@ -83,6 +84,8 @@ class Balloons (pygame.sprite.Sprite):
     def draw(self):
         '''draw the balloon in its current position'''
         if self.active:
+            self.screen.blit(self.image2, (self.x, self.y))
+        else:
             self.screen.blit(self.image, (self.x, self.y))
             
   
@@ -119,7 +122,7 @@ def title(screen):
     
     background = (0, 0, 0)
     
-    sky = Background(screen, scroll_speed, menu_image)
+    sky = Backgrounds(screen, scroll_speed, menu_image)
 
     # Map the back button to the escape key.
     if android:
@@ -134,9 +137,9 @@ def title(screen):
     
     pygame.key.set_repeat(FPS, FPS) # set key repeat on 
     
-    play = Balloons(screen, SCREEN_WIDTH / 2 - 50, SCREEN_HEIGHT - 600, 0, balloon_speed, play_image, played_image)
-    highscore = Balloons(screen, SCREEN_WIDTH / 2 - 150, SCREEN_HEIGHT - 300, 0, balloon_speed, highscore_image, highscored_image)
-    getout = Balloons(screen, SCREEN_WIDTH / 2 - 250, SCREEN_HEIGHT -400, 0, balloon_speed, exit_image, exited_image)
+    play = Balloons(screen, SCREEN_WIDTH / 2 - 50, SCREEN_HEIGHT/2 - 330, 0, balloon_speed, play_image, played_image)
+    highscore = Balloons(screen, SCREEN_WIDTH / 2 - 230, SCREEN_HEIGHT/2 - 150, 0, balloon_speed, highscore_image, highscored_image)
+    getout = Balloons(screen, SCREEN_WIDTH / 2 +30, SCREEN_HEIGHT/2 +10, 0, balloon_speed, exit_image, exited_image)
        
     while True:
         #game loop
@@ -158,6 +161,37 @@ def title(screen):
                     pygame.quit()
                     sys.exit()
             elif event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    if getout.rect.collidepoint(event.pos):
+                        getout.active = True
+                        screen.fill(background)
+                        sky.draw()
+                        play.draw()
+                        highscore.draw()
+                        getout.draw()
+                        pygame.display.flip()
+                    elif play.rect.collidepoint(event.pos):
+                        play.active = True
+                        screen.fill(background)
+                        sky.draw()
+                        play.draw()
+                        highscore.draw()
+                        getout.draw()
+                        pygame.display.flip()
+                    elif highscore.rect.collidepoint(event.pos):
+                        highscore.active = True
+                        screen.fill(background)
+                        sky.draw()
+                        play.draw()
+                        highscore.draw()
+                        getout.draw()
+                        pygame.display.flip()
+                
+                    
+            elif event.type == pygame.MOUSEBUTTONUP:
+                highscore.active = False
+                play.active = False
+                getout.active = False
                 if event.button == 1:
                     if getout.rect.collidepoint(event.pos):
                         sys.exit(0)
