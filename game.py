@@ -163,7 +163,7 @@ def game(screen):
     except pygame.error:
         print "Couldn't find file."
     
-    balloon_speed = 3
+    balloon_speed = 4
     moveRate = 2
     
     score = 0
@@ -236,17 +236,18 @@ def game(screen):
                         balloon.x -= 5.0
             elif event.type == TIMEREVENT:
                 score += 1
-            elif event.type == USEREVENT + 1 and score>=2 and score<=10:
-                airplanes.add(Enemy(screen, init_x, randint(-50, 200), randint(1, 5), randint(1, 3), enemy_image, (100, 50), 1, 1))
+            elif event.type == USEREVENT + 1 and score>=2 and score<=20:
+                airplanes.add(Enemy(screen, init_x, randint(-50, 200), randint(1, 5), 3, enemy_image, (100, 50), 1, 1))
             
-            elif event.type == USEREVENT + 2 and score>=10: 
-                airplanes.add(Enemy(screen, init_x, randint(-50, 200), randint(1, 5), randint(1, 5), enemy_image, (100, 50), 1, 1))
+            elif event.type == USEREVENT + 2 and score>=50: 
+                airplanes.add(Enemy(screen, init_x, randint(-50, 200), randint(1, 5), randint(3, 5), enemy_image, (100, 50), 1, 1))
                 
-            elif event.type == USEREVENT + 3:
+            elif event.type == USEREVENT + 3 and score>=5:
                 birds.add(Enemy(screen, init_x, randint(-50, SCREEN_HEIGHT + 50), randint(2,4), 0, "assets/balloon.gif", (80, 80), 1, 1))
-                
-            elif event.type == USEREVENT + 4:
-                missiles.add(Enemy(screen, randint(0, SCREEN_WIDTH), SCREEN_HEIGHT, 0, randint(-8, -3), "assets/balloon.gif", (50, 120), 1, 1))
+                if score >=20 and score<40:
+                    missiles.add(Enemy(screen, randint(0, SCREEN_WIDTH), SCREEN_HEIGHT, 0, randint(-8, -3), "assets/missile.gif", (15, 50), 1, 1))
+            elif event.type == USEREVENT + 4 and score>=50:
+                missiles.add(Enemy(screen, randint(0, SCREEN_WIDTH), SCREEN_HEIGHT, 0, randint(-8, -3), "assets/missile.gif", (15, 50), 1, 1))
         
         sky.update()
         sky.draw()

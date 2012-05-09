@@ -1,0 +1,1 @@
+{"layout": "internal", "orientation": "portrait", "package": "com.domain.skyhigh", "include_pil": true, "name": "Sky High", "icon_name": "Sky High", "version": "2.0", "permissions": ["VIBRATE"], "include_sqlite": false, "numeric_version": "200"}
