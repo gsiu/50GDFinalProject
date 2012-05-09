@@ -177,8 +177,8 @@ def game(screen):
         android.accelerometer_enable(True)
 
     # Use a timer to control FPS.
-    pygame.time.set_timer(TIMEREVENT, 3000)
-    pygame.time.set_timer(USEREVENT + 1, 1000)
+    pygame.time.set_timer(TIMEREVENT, 1000)
+    pygame.time.set_timer(USEREVENT + 1, 3000)
     pygame.time.set_timer(USEREVENT + 2, 2000)
     pygame.time.set_timer(USEREVENT + 3, 4000)
     pygame.time.set_timer(USEREVENT + 4, 2000)
@@ -234,9 +234,9 @@ def game(screen):
                 elif event.key == pygame.K_LEFT:
                     if balloon.x >= 0:
                         balloon.x -= 5.0
-            elif event.type == USEREVENT + 1:
+            elif event.type == TIMEREVENT:
                 score += 1
-            elif event.type == TIMEREVENT and score>=2 and score<=10:
+            elif event.type == USEREVENT + 1 and score>=2 and score<=10:
                 airplanes.add(Enemy(screen, init_x, randint(-50, 200), randint(1, 5), randint(1, 3), enemy_image, (100, 50), 1, 1))
             
             elif event.type == USEREVENT + 2 and score>=10: 
@@ -263,8 +263,6 @@ def game(screen):
                 if android:
                     android.vibrate(1)
                 #return score
-            #enemy.update()
-            #enemy.draw()
             
         for bird in birds:
             bird.dy = 6*cos(0.1*elapsed_time) + 1
@@ -273,8 +271,6 @@ def game(screen):
                 if android:
                     android.vibrate(1)
                 #return score
-            #bird.update()
-            #bird.draw()
             
         for missile in missiles:
             if pygame.sprite.collide_mask(missile, balloon):
@@ -282,8 +278,6 @@ def game(screen):
                 if android:
                     android.vibrate(1)
                 #return score
-            #missile.update()
-            #missile.draw()
             
         airplanes.update()
         airplanes.draw(screen)
