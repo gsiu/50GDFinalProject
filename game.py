@@ -107,18 +107,18 @@ class Enemy(pygame.sprite.Sprite):
         self.dx = dx
         self.dy = dy
         
-        self.image = pygame.transform.scale (load_image(image_file), (100, 50))
+        self.image = pygame.transform.scale(load_image(image_file), (100, 50))
         self.rect = self.image.get_rect()
         self.rect.topleft = (self.x, self.y)
         self.image_w, self.image_h = self.image.get_size()
         
         self.active = True
         
-        
     def update(self):
         '''move and update the sprite'''
-        #if (self.rect.left < 0) or (self.rect.right > SCREEN_WIDTH) or (self.rect.top <0) or (self.rect.bottom > SCREEN_HEIGHT):
-        #   self.kill()
+        if (self.rect.left < 0 - 2*self.image_w) or (self.rect.right > SCREEN_WIDTH + 2*self.image_w) or (self.rect.top < 0 - 2*self.image_h) or (self.rect.bottom > SCREEN_HEIGHT + 2*self.image_h):
+           self.kill()
+           self.active = False
         self.x += self.dx
         self.y += self.dy
         self.rect.topleft = (self.x, self.y)
@@ -208,10 +208,11 @@ def game(screen):
             elif event.type == USEREVENT + 1:
                 score += 1
             elif event.type == TIMEREVENT and score>=2 and score<=10:
-                airplanes.add(Enemy(screen, init_x, -50, randint(0, 3), randint(0, 3), enemy_image)) 
+                airplanes.add(Enemy(screen, init_x, randint(-50, 200), randint(1, 5), randint(1, 3), enemy_image))
+                print "new level enemy"
             
             elif event.type == USEREVENT + 2 and score>=10: 
-                airplanes.add(Enemy(screen, init_x, -50, randint(1, 5), randint(1, 5), enemy_image)) 
+                airplanes.add(Enemy(screen, init_x, randint(-50, 200), randint(1, 5), randint(1, 5), enemy_image))
         
         sky.update()
         sky.draw()
@@ -230,8 +231,6 @@ def game(screen):
                 return score
             enemy.update()
             enemy.draw()
-            
-            
             
         screen.blit(text, (0,  SCREEN_HEIGHT - 30))
         pygame.display.flip()
