@@ -116,7 +116,7 @@ class Enemy(pygame.sprite.Sprite):
         
     def update(self):
         '''move and update the sprite'''
-        if (self.rect.left < 0 - 2*self.image_w) or (self.rect.right > SCREEN_WIDTH + 2*self.image_w) or (self.rect.top < 0 - 2*self.image_h) or (self.rect.bottom > SCREEN_HEIGHT + 2*self.image_h):
+        if (self.rect.left < 0 - 3*self.image_w) or (self.rect.right > SCREEN_WIDTH + 3*self.image_w) or (self.rect.top < 0 - 2*self.image_h) or (self.rect.bottom > SCREEN_HEIGHT):
            self.kill()
            self.active = False
         self.x += self.dx
@@ -169,6 +169,8 @@ def game(screen):
     
     airplanes = pygame.sprite.Group()
     
+    spawn_pt = range(-300, -100) + range(SCREEN_WIDTH, SCREEN_WIDTH + 200)
+    
     while True:
         #game loop
         time_passed = clock.tick(FPS)
@@ -188,7 +190,9 @@ def game(screen):
             if android.check_pause():
                 android.wait_for_resume()
                 
-        init_x = randint(0, SCREEN_WIDTH)
+        #Randomly choose a spawn point from the list
+        init_x = choice(spawn_pt)
+        
         if init_x < SCREEN_WIDTH/2:
             enemy_image = "assets/plane-right.gif"
         else:
@@ -213,6 +217,7 @@ def game(screen):
             
             elif event.type == USEREVENT + 2 and score>=10: 
                 airplanes.add(Enemy(screen, init_x, randint(-50, 200), randint(1, 5), randint(1, 5), enemy_image))
+                print "new other enemy"
         
         sky.update()
         sky.draw()
