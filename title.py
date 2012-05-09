@@ -185,7 +185,6 @@ def title(screen):
                         getout.draw()
                         pygame.display.flip()
                 
-                    
             elif event.type == pygame.MOUSEBUTTONUP:
                 highscore.active = False
                 play.active = False
@@ -200,7 +199,6 @@ def title(screen):
                     elif highscore.rect.collidepoint(event.pos):
                         mixer.music.fadeout(500)
                         return 100
-          
                 
                 
         screen.fill(background)
@@ -217,10 +215,7 @@ def title(screen):
         getout.update()
         getout.draw()
         
-            
-        screen.blit(text, (0,  SCREEN_HEIGHT - 30))
         pygame.display.flip()
-
 
 if __name__ == "__main__":
     main()
