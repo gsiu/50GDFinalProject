@@ -163,7 +163,7 @@ def game(screen):
     except pygame.error:
         print "Couldn't find file."
     
-    balloon_speed = 4
+    balloon_speed = 6
     moveRate = 2
     
     score = 0
@@ -216,6 +216,11 @@ def game(screen):
                 balloon.x += 1
             else:
                 balloon.x -= 1
+            if balloon.y >=0 and balloon.y <= SCREEN_HEIGHT - balloon.image_h:
+                balloon.y = balloon.y + (balloon_move[1] * moveRate)
+            elif balloon.y <= 0:
+                balloon.y += 1
+            
                     
 
             if android.check_pause():
@@ -236,10 +241,16 @@ def game(screen):
                     sys.exit()
                 elif event.key == pygame.K_RIGHT:
                     if balloon.x <= SCREEN_WIDTH - balloon.image_w:
-                        balloon.x += 5.0
+                        balloon.x += balloon_speed
                 elif event.key == pygame.K_LEFT:
                     if balloon.x >= 0:
-                        balloon.x -= 5.0
+                        balloon.x -= balloon_speed
+                elif event.key == pygame.K_DOWN:
+                    if balloon.y <= SCREEN_HEIGHT - balloon.image_h:
+                        balloon.y += balloon_speed
+                elif event.key == pygame.K_UP:
+                    if balloon.y >= 0:
+                        balloon.y -= balloon_speed
             elif event.type == TIMEREVENT:
                 score += 1
             elif event.type == USEREVENT + 1 and score>=2 and score<=20:
