@@ -78,6 +78,12 @@ class Balloon (pygame.sprite.Sprite):
     def update(self, lives):
         '''update the balloon and check to make sure it hasn't moved off the screen'''
         self.lives = lives
+        if lives > 7:
+            self.image = pygame.transform.scale (load_image('assets/balloon.png'), (132, 200))
+        if lives <= 7 and  lives >3:
+            self.image = pygame.transform.scale (load_image('assets/balloon1.png'), (132, 200))
+        if lives <= 3:
+            self.image = pygame.transform.scale (load_image('assets/balloon2.png'), (132, 200))
         if ((self.x + self.dx) <= 0):
             self.dx = self.dx * -1
         if ((self.x + self.dx) >= self.screen.get_size()[0]):
@@ -92,8 +98,7 @@ class Balloon (pygame.sprite.Sprite):
     
     def draw(self):
         '''draw the balloon in its current position'''
-        if self.active:
-            self.screen.blit(self.image, self.rect)
+        self.screen.blit(self.image, self.rect)
             
             
 class Enemy(pygame.sprite.Sprite):
@@ -200,6 +205,8 @@ def game(screen):
     elapsed_time = 0
     timer = 0
     justcollided = 0
+    imagechanged = False
+    
     
     while True:
         #game loop
@@ -286,14 +293,17 @@ def game(screen):
         
         sky.update()
         sky.draw()
+      
         
-        
-        balloon.update(lives)
+           
+       # balloon.update(lives)
         balloon.draw()
         if balloon.y <= SCREEN_HEIGHT / 3:
             balloon.dy = 0
             sky.scrolling = True
         if justcollided <= 0:
+            balloon.update(lives)
+            
             for enemy in airplanes:
                 if pygame.sprite.collide_mask(enemy, balloon):
                     # ADD GAME OVER SCREEN HERE
@@ -343,7 +353,9 @@ def game(screen):
                     timer = 25
                     powerup.kill()
                     score += 10
-            
+        else:
+           balloon.image = pygame.transform.scale (load_image('assets/balloonflash.png'), (132, 200))
+           imagechanged = True
         airplanes.update()
         airplanes.draw(screen)
         birds.update()
