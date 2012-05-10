@@ -68,7 +68,7 @@ class Balloon (pygame.sprite.Sprite):
         self.dx = dx
         self.dy = dy
         
-        self.image = pygame.transform.scale (load_image(image_file), (100, 200))
+        self.image = pygame.transform.scale (load_image(image_file), (132, 200))
         self.rect = self.image.get_rect()
         self.rect.topleft = (self.x, self.y)
         self.image_w, self.image_h = self.image.get_size()
@@ -186,7 +186,7 @@ def game(screen):
     
     pygame.key.set_repeat(FPS, FPS) # set key repeat on 
     
-    balloon = Balloon(screen, SCREEN_WIDTH / 2 - 50, SCREEN_HEIGHT, 0, balloon_speed, "assets/balloon.gif")
+    balloon = Balloon(screen, SCREEN_WIDTH / 2 - 50, SCREEN_HEIGHT, 0, balloon_speed, "assets/balloon.png")
     
     airplanes = pygame.sprite.Group()
     birds = pygame.sprite.Group()
@@ -251,9 +251,9 @@ def game(screen):
             elif event.type == USEREVENT + 3 and score>=5:
                 birds.add(Enemy(screen, init_x, randint(-50, SCREEN_HEIGHT + 50), randint(2,4), 0, "assets/balloon.gif", (80, 80), 1, 1))
                 if score >=20 and score<40:
-                    missiles.add(Enemy(screen, randint(0, SCREEN_WIDTH), SCREEN_HEIGHT, 0, randint(-8, -3), "assets/missile.gif", (15, 50), 1, 1))
+                    missiles.add(Enemy(screen, randint(0, SCREEN_WIDTH), SCREEN_HEIGHT, 0, randint(-8, -3), "assets/missile.png", (15, 50), 1, 1))
             elif event.type == USEREVENT + 4 and score>=50:
-                missiles.add(Enemy(screen, randint(0, SCREEN_WIDTH), SCREEN_HEIGHT, 0, randint(-8, -3), "assets/missile.gif", (15, 50), 1, 1))
+                missiles.add(Enemy(screen, randint(0, SCREEN_WIDTH), SCREEN_HEIGHT, 0, randint(-8, -3), "assets/missile.png", (15, 50), 1, 1))
         
             elif event.type == USEREVENT + 5 and score>=30:
                 powerups.add(Enemy(screen, randint(100, SCREEN_WIDTH-100), 0, 0, 3, "assets/balloon.gif", (80, 80), 1, 1))
