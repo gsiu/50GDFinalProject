@@ -204,6 +204,8 @@ def game(screen):
     font = pygame.font.Font("BRLNSDB.TTF", 30)
     try:
         mixer.music.load("assets/Scores.ogg")
+        hit = mixer.Sound("assets/hit.ogg")
+        star = mixer.Sound("assets/star.ogg")
         mixer.music.play(-1)
     except pygame.error:
         print "Couldn't find file."
@@ -362,6 +364,7 @@ def game(screen):
                         score = 1
                     justcollided = 20
                     lives -= 1
+                    hit.play()
                 
             for bird in birds:
                 if bird.dy != 20:
@@ -380,6 +383,7 @@ def game(screen):
                         score = 1
                     justcollided = 20
                     lives -= 1
+                    hit.play()
                 
             for missile in missiles:
                 if pygame.sprite.collide_mask(missile, balloon):
@@ -396,12 +400,14 @@ def game(screen):
                         score = 1
                     justcollided = 20
                     lives -= 1
+                    hit.play()
                     
             for powerup in powerups:
                 if pygame.sprite.collide_mask(powerup, balloon):
                     timer = 25
                     powerup.kill()
                     score += 10
+                    star.play()
         else:
            balloon.image = balloonflashing
            imagechanged = True
