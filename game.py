@@ -159,7 +159,7 @@ def game(screen):
     font = pygame.font.Font("assets/freesansbold.ttf", 30)
     try:
         mixer.music.load("assets/Scores.ogg")
-        #mixer.music.play(-1)
+        mixer.music.play(-1)
     except pygame.error:
         print "Couldn't find file."
     
@@ -202,12 +202,17 @@ def game(screen):
     
     justcollided = 0
     
+    lives = 10
+    
     while True:
         #game loop
         time_passed = clock.tick(FPS)
         elapsed_time += 1
         
-        text = font.render("Score: " + str(score), 1, (0, 0, 0)) #render score
+        text = font.render("Score: " + str(score), 1, (0, 0, 0)) 
+        #render score
+        
+        lives_txt = font.render("Lives: " + str(lives), 1, (0, 0, 0)) 
         
         timer -= 1
         justcollided -= 1
@@ -297,11 +302,14 @@ def game(screen):
                     # ADD GAME OVER SCREEN HERE
                     if android:
                         android.vibrate(0.3)
-                        #return score
+                    if lives <= 0:
+                        return score
                     enemy.dy = 20
                     timer = 40
-                    score -= 10
+                    if score >= 10:
+                        score -= 10
                     justcollided = 20
+                    lives -= 1
                 
             for bird in birds:
                 if bird.dy != 20:
@@ -310,11 +318,14 @@ def game(screen):
                     # ADD GAME OVER SCREEN HERE
                     if android:
                         android.vibrate(0.3)
-                    #return score
+                    if lives <= 0:
+                        return score
                     bird.dy = 20
                     timer = 30
-                    score -= 5
+                    if score >= 5:
+                        score -= 5
                     justcollided = 20
+                    lives -= 1
                 
             for missile in missiles:
                 if pygame.sprite.collide_mask(missile, balloon):
@@ -322,15 +333,19 @@ def game(screen):
                     if android:
                         android.vibrate(0.1)
                     missile.dy = 20
-                    #return score
+                    if lives <= 0:
+                        return score
                     timer = 40
-                    score -= 15
+                    if score >= 15:
+                        score -= 15
                     justcollided = 20
+                    lives -= 1
                     
             for powerup in powerups:
                 if pygame.sprite.collide_mask(powerup, balloon):
-                    timer = 30
+                    timer = 25
                     powerup.kill()
+                    score += 10
             
         airplanes.update()
         airplanes.draw(screen)
@@ -342,6 +357,7 @@ def game(screen):
         powerups.draw(screen)
             
         screen.blit(text, (0,  SCREEN_HEIGHT - 30))
+        screen.blit(lives_txt, (0, 0))
         pygame.display.flip()
 
 
