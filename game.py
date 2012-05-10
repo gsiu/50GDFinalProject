@@ -57,7 +57,7 @@ class Background (pygame.sprite.Sprite):
 
 class Balloon (pygame.sprite.Sprite):
     
-    def __init__(self, screen, init_x, init_y, dx, dy, image_file):
+    def __init__(self, screen, init_x, init_y, dx, dy, image_file, lives):
         '''constructor for balloon class, initialize the balloon'''
         pygame.sprite.Sprite.__init__(self)
         
@@ -73,10 +73,11 @@ class Balloon (pygame.sprite.Sprite):
         self.rect.topleft = (self.x, self.y)
         self.image_w, self.image_h = self.image.get_size()
         
-        self.active = True
+        self.lives = lives
         
-    def update(self):
+    def update(self, lives):
         '''update the balloon and check to make sure it hasn't moved off the screen'''
+        self.lives = lives
         if ((self.x + self.dx) <= 0):
             self.dx = self.dx * -1
         if ((self.x + self.dx) >= self.screen.get_size()[0]):
@@ -186,23 +187,19 @@ def game(screen):
     
     pygame.key.set_repeat(FPS, FPS) # set key repeat on 
     
-    balloon = Balloon(screen, SCREEN_WIDTH / 2 - 50, SCREEN_HEIGHT, 0, balloon_speed, "assets/balloon.png")
+    lives = 10
+    
+    balloon = Balloon(screen, SCREEN_WIDTH / 2 - 50, SCREEN_HEIGHT, 0, balloon_speed, "assets/balloon.png", lives)
     
     airplanes = pygame.sprite.Group()
     birds = pygame.sprite.Group()
     missiles = pygame.sprite.Group()
     
     powerups = pygame.sprite.Group()
-    
     spawn_pt = range(-200, -100) + range(SCREEN_WIDTH, SCREEN_WIDTH + 100)
-    
     elapsed_time = 0
-    
     timer = 0
-    
     justcollided = 0
-    
-    lives = 10
     
     while True:
         #game loop
@@ -291,7 +288,7 @@ def game(screen):
         sky.draw()
         
         
-        balloon.update()
+        balloon.update(lives)
         balloon.draw()
         if balloon.y <= SCREEN_HEIGHT / 3:
             balloon.dy = 0
