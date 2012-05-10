@@ -46,10 +46,15 @@ class Background (pygame.sprite.Sprite):
         self.image_w, self.image_h = self.image.get_size()
         
         self.dy = speed
+        self.dy2 = speed/3
         self.rect.bottom = SCREEN_HEIGHT
         
-    def update(self):
-        if self.scrolling == True:
+    def update(self, score):
+        
+        if score < 3 :
+            self.rect.bottom += self.dy2
+        else:
+            #if self.scrolling == True:
             self.rect.bottom += self.dy
         if self.rect.top >= 0:
             self.rect.bottom = SCREEN_HEIGHT
@@ -116,6 +121,8 @@ class Enemy(pygame.sprite.Sprite):
             dx = dx * -1
         self.dx = dx
         self.dy = dy
+
+        self.juststarted = True
         
         self.sheet = load_image(image_file)
         self.frame = []
@@ -149,6 +156,42 @@ class Enemy(pygame.sprite.Sprite):
         self.frame_index = (self.frame_index + 1) % len(self.frame)
         self.image = self.frame[self.frame_index]
         self.rect.topleft = (self.x, self.y)
+
+    def update2(self, score, SCREEN_SIZE):
+        '''special move and update for the city'''
+#        if (self.rect.left < 0 - 3*self.image_w) or (self.rect.right > SCREEN_WIDTH + 3*self.image_w) or (self.rect.top < 0 - 3*self.image_h) or (self.rect.bottom > SCREEN_HEIGHT + 3* self.image_h):
+#          self.kill()
+#          self.active = False
+   
+        if score <= 2:
+            if  self.y <= SCREEN_SIZE - 600:
+                self.dy = -5
+            else:
+                self.dy = -5          
+        else :
+            if self.y >= SCREEN_SIZE -200 :
+                self.dy = 0
+            else:
+                self.dy = 3
+
+        if self.juststarted:
+            self.dy = 3
+        if score > 3:
+            self.juststarted = False
+        
+        
+       # if self.y >= SCREEN_SIZE -800 :
+        #    self.dy = -2
+        
+            
+        
+        self.x += 0
+        self.y += self.dy
+        print str(self.y)
+        print str(score)
+        print str(SCREEN_SIZE)
+        self.rect.topleft = (self.x, self.y)
+        
     
     def draw(self):
         '''if the enemy is active, draw it to the screen'''
@@ -203,8 +246,9 @@ def game(screen):
     lives = 10
     
     balloon = Balloon(screen, SCREEN_WIDTH / 2 - 50, SCREEN_HEIGHT, 0, balloon_speed, "assets/balloon.png", lives)
-    city = Balloon(screen,0, SCREEN_HEIGHT-800, 0, -3, "assets/cityskyline.png", 1)
+    city = Enemy(screen,0, SCREEN_HEIGHT-800, 0, -3, "assets/cityskyline.png",(800,480),1,1)
     city.image = load_image("assets/cityskyline.png")
+    city.rect = city.image.get_rect()
     airplanes = pygame.sprite.Group()
     birds = pygame.sprite.Group()
     missiles = pygame.sprite.Group()
@@ -295,17 +339,21 @@ def game(screen):
  
         if timer <= 20 and timer >= 0:
             sky.dy = 6
-        elif timer > 25:
-            sky.dy = -6
+            sky.dy2 = 6
+        elif timer > 45:
+            sky.dy = -12
+            sky.dy2 = -12
         else:
             sky.dy = 3
+            sky.dy2 = 1
         
-        sky.update()
+        sky.update(score)
         sky.draw()
-      
-        if score <= 10:
-            city.update(1, city.image, city.image, city.image, 0)
-            city.draw()
+
+        city.update2(score,SCREEN_HEIGHT)
+        city.draw()
+        
+            
         balloon.update(lives, balloon0, balloon1, balloon2, justcollided)
         balloon.draw()
         if balloon.y <= SCREEN_HEIGHT / 3:
@@ -322,9 +370,11 @@ def game(screen):
                     if lives <= 0:
                         return score
                     enemy.dy = 20
-                    timer = 40
+                    timer = 80
                     if score >= 10:
                         score -= 10
+                    else:
+                        score = 1
                     justcollided = 20
                     lives -= 1
                 
@@ -338,9 +388,11 @@ def game(screen):
                     if lives <= 0:
                         return score
                     bird.dy = 20
-                    timer = 30
+                    timer = 70
                     if score >= 5:
                         score -= 5
+                    else:
+                        score = 1
                     justcollided = 20
                     lives -= 1
                 
@@ -352,9 +404,11 @@ def game(screen):
                     missile.dy = 20
                     if lives <= 0:
                         return score
-                    timer = 40
+                    timer = 80
                     if score >= 15:
                         score -= 15
+                    else:
+                        score = 1
                     justcollided = 20
                     lives -= 1
                     
