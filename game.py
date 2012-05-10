@@ -46,15 +46,12 @@ class Background (pygame.sprite.Sprite):
         self.image_w, self.image_h = self.image.get_size()
         
         self.dy = speed
-        self.dy2 = speed/3
         self.rect.bottom = SCREEN_HEIGHT
         
     def update(self, score):
         
-        if score < 3 :
-            self.rect.bottom += self.dy2
-        else:
-            #if self.scrolling == True:
+       
+        if self.scrolling == True:
             self.rect.bottom += self.dy
         if self.rect.top >= 0:
             self.rect.bottom = SCREEN_HEIGHT
@@ -282,7 +279,7 @@ def game(screen):
                 balloon.x += 1
             else:
                 balloon.x -= 1
-            if balloon.rect.bottom <= SCREEN_HEIGHT and balloon.y >= (SCREEN_HEIGHT - balloon.image_h)/3:
+            if balloon.rect.bottom <= SCREEN_HEIGHT and balloon.y >= (SCREEN_HEIGHT - balloon.image_h):
                 balloon.y = balloon.y + ((balloon_move[1] - 5) * moveRate)
             elif balloon.rect.bottom >= SCREEN_HEIGHT:
                 balloon.y -= 1
@@ -335,17 +332,14 @@ def game(screen):
                 missiles.add(Enemy(screen, randint(0, SCREEN_WIDTH), SCREEN_HEIGHT, 0, randint(-8, -3), "assets/missile.png", (40, 150), 1, 1))
         
             elif event.type == USEREVENT + 5 and score>=30:
-                powerups.add(Enemy(screen, randint(100, SCREEN_WIDTH-100), 0, 0, 3, "assets/balloon.gif", (80, 80), 1, 1))
+                powerups.add(Enemy(screen, randint(100, SCREEN_WIDTH-100), 0, 0, 3, "assets/gold-star.gif", (60, 60), 1, 1))
  
         if timer <= 20 and timer >= 0:
             sky.dy = 6
-            sky.dy2 = 6
         elif timer > 45:
             sky.dy = -12
-            sky.dy2 = -12
         else:
             sky.dy = 3
-            sky.dy2 = 1
         
         sky.update(score)
         sky.draw()
