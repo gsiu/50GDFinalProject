@@ -36,14 +36,15 @@
 
 <p><a href="http://gsiu.github.com/50GDFinalProject/instructions"><h3>Instructions</h3></a></p>
 
-<h3>To Run the Game</h3>
+<h3>To Play the Game</h3>
 
-<p>Download and unzip the file (or clone the directory). Then run the following code:</p>
+<p>Download and unzip the file (or clone the directory). </p>
+<p>If you have pgs4a fully installed (see <a href="http://pygame.renpy.org">pygame.renpy.org</a>), copy the 50GDFinalProject folder into the pgs4a directory. Then run the following code inside the pgs4a directory (after the first step -- configure -- you will have to answer a series of questions. For the question on where to store the files, choose 1 -- all internally.):</p>
 
-<pre><code>$ xxxxxxxxxxxxxxxxxxxxcd your_repo_root/repo_name
-$ git fetch origin
-$ git checkout gh-pages
+<pre><code> >> android.py configure 50GDFinalProject
+ >> android.py build 50GDFinalProject release install
 </code></pre>
+<p>The install command will install the app onto an emulator or a connected Android device.</p>
       </section>
     </div>
     <footer>
