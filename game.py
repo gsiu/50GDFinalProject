@@ -170,7 +170,7 @@ def game(screen):
     balloon2 = pygame.transform.scale (load_image('assets/balloon2.png'), (132, 200))
     balloonflashing = pygame.transform.scale (load_image('assets/balloonflash.png'), (132, 200))
     
-    font = pygame.font.Font("assets/freesansbold.ttf", 30)
+    font = pygame.font.Font("BRLNSDB.TTF", 30)
     try:
         mixer.music.load("assets/Scores.ogg")
         mixer.music.play(-1)
@@ -203,7 +203,8 @@ def game(screen):
     lives = 10
     
     balloon = Balloon(screen, SCREEN_WIDTH / 2 - 50, SCREEN_HEIGHT, 0, balloon_speed, "assets/balloon.png", lives)
-    
+    city = Balloon(screen,0, SCREEN_HEIGHT-800, 0, -3, "assets/cityskyline.png", 1)
+    city.image = load_image("assets/cityskyline.png")
     airplanes = pygame.sprite.Group()
     birds = pygame.sprite.Group()
     missiles = pygame.sprite.Group()
@@ -221,10 +222,10 @@ def game(screen):
         time_passed = clock.tick(FPS)
         elapsed_time += 1
         
-        text = font.render("Score: " + str(score), 1, (0, 0, 0)) 
+        text = font.render("Height: " + str(score), 1, (120, 40, 80)) 
         #render score
         
-        lives_txt = font.render("Lives: " + str(lives), 1, (0, 0, 0)) 
+        lives_txt = font.render("Balloon Strength: " + str(lives)+ "/10" , 1, (85, 0, 50)) 
         
         timer -= 1
         justcollided -= 1
@@ -302,8 +303,9 @@ def game(screen):
         sky.update()
         sky.draw()
       
-        
-           
+        if score <= 10:
+            city.update(1, city.image, city.image, city.image, 0)
+            city.draw()
         balloon.update(lives, balloon0, balloon1, balloon2, justcollided)
         balloon.draw()
         if balloon.y <= SCREEN_HEIGHT / 3:

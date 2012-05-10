@@ -88,7 +88,7 @@ class Balloons1 (pygame.sprite.Sprite):
      
     
     
-def scores(screen):
+def endgame(screen, thescore):
     """Score function. Takes in screen (surface to blit to). Returns 0 if player clicks Menu button."""
     SCREEN_WIDTH, SCREEN_HEIGHT = screen.get_size()[0], screen.get_size()[1]
     pygame.init()
@@ -100,38 +100,21 @@ def scores(screen):
 
     ################3333
 
-    if android:
-        filename = "highscores.txt"
-    else:
-        filename = "highscores.txt"        
-
-
-    highscores = [("",0),("",0), ("",0), ("",0), ("",0), ("",0), ("",0), ("",0) ]
-    try: # If there is already a highscores file, try opening it
-        f = open(filename, "r+")
-    except IOError: # If there is no highscores file, create one and add 0's to it
-        f = open(filename, "w+")
-        cPickle.dump(highscores, f)
-        f.seek(0)
-
-    highscores = cPickle.load(f)
-
-    f.close()
-    #highscores.sort()
-    #highscores.reverse()
-
-    # Fonts
-    font = pygame.font.Font("BRLNSDB.TTF", 30)
+    
+    font = pygame.font.Font("BRLNSDB.TTF", 50)
+    scorefont = pygame.font.Font("BRLNSDB.TTF", 280)
    
     
-    score_text = []
-    for i in range(len(highscores)):
-        a =  str(highscores[i][1]) + " by " +(highscores[i][0])
-        score_text.append(font.render(a, 1, (100, 20, 0)))
-    score_height = score_text[0].get_rect()[3]
-    score_rect = []
-    for i in range(len(highscores)):
-        score_rect.append(score_text[0].get_rect(topleft = (60, 30 + score_height * i)))
+    score_text = str(thescore)
+    message_text = " times the height of"
+    message_text2 ="Willis Tower. Enjoy!"
+    scoretext = scorefont.render(score_text, 1, (100, 20, 0))
+    messagetext = font.render(message_text, 1, (200, 10, 0))
+    messagetext2 = font.render(message_text2, 1, (200, 10, 0))
+    score_rect = scoretext.get_rect()
+    message_rect = messagetext.get_rect()
+    
+# score_rect.append(score_text.get_rect(topleft = (60, 30 + score_height * i)))
 
        
        
@@ -139,14 +122,11 @@ def scores(screen):
 
     ##################33333
     
-    menu_image = "assets/highscores.png"
-    play_image = "assets/play.png"
-    played_image = "assets/play_pressed.png"
-    highscore_image = "assets/highscore.png"
-    highscored_image = "assets/highscore_pressed.png"
+    menu_image = "assets/endgame.png"
+    
     exit_image = "assets/exit.png"
     exited_image = "assets/exit_pressed.png"
-    font = pygame.font.Font("assets/freesansbold.ttf", 30)
+  
     try:
         mixer.music.load("assets/Scores.ogg")
         mixer.music.play(-1)
@@ -212,10 +192,18 @@ def scores(screen):
         sky.draw()
         getout.draw()
 
-        for i in range(len(highscores)):
-            screen.blit(score_text[i], score_rect[i])
+
+        
+        screen.blit(scoretext,(20, 15))
+
+        screen.blit(messagetext,(17, 300))
+        screen.blit(messagetext2,(20, 350))
             
         pygame.display.flip()
 
 if __name__ == "__main__":
-    main()
+    pygame.init()
+    screen = pygame.display.set_mode((480, 800), 0, 0) 
+    pygame.display.set_caption('Sky High')
+    clock = pygame.time.Clock() 
+    endgame(screen, 100)

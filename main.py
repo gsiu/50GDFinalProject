@@ -8,6 +8,7 @@ from operator import itemgetter
 from title import *
 from game import *
 from highscores import *
+from endscreen import endgame
 
 try:
     import android
@@ -59,6 +60,7 @@ def main():
             levelNum = scores(screen)
             # Returns 0 when player exits highscore screen
             levelNum = 0
+        
 
         else: # levelNum == 99:
             t = game(screen)
@@ -152,8 +154,10 @@ def main():
             cPickle.dump(highscore, f)
             f.close()
             levelNum = 0
+            score2 = score
             score = 0
             username = "Anonymous"
+            endgame(screen, score2)
           
             
         # Flip the display

@@ -121,7 +121,7 @@ def scores(screen):
     #highscores.reverse()
 
     # Fonts
-    font = pygame.font.Font("BRLNSDB.TTF", 30)
+    font = pygame.font.Font("Baby Universe Italic.ttf", 30)
    
     
     score_text = []
