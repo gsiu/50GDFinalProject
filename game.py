@@ -77,15 +77,16 @@ class Balloon (pygame.sprite.Sprite):
         
         self.lives = lives
         
-    def update(self, lives, img1, img2, img3):
+    def update(self, lives, img1, img2, img3, justcollided):
         '''update the balloon and check to make sure it hasn't moved off the screen'''
         self.lives = lives
-        if lives > 7:
-            self.image = img1
-        if lives <= 7 and  lives >3:
-            self.image = img2
-        if lives <= 3:
-            self.image = img3
+        if  justcollided <= 0: 
+            if lives > 7:
+                self.image = img1
+            if lives <= 7 and  lives >3:
+                self.image = img2
+            if lives <= 3:
+                self.image = img3
         if ((self.x + self.dx) <= 0):
             self.dx = self.dx * -1
         if ((self.x + self.dx) >= self.screen.get_size()[0]):
@@ -303,13 +304,13 @@ def game(screen):
       
         
            
-       # balloon.update(lives)
+        balloon.update(lives, balloon0, balloon1, balloon2, justcollided)
         balloon.draw()
         if balloon.y <= SCREEN_HEIGHT / 3:
             balloon.dy = 0
             sky.scrolling = True
         if justcollided <= 0:
-            balloon.update(lives, balloon0, balloon1, balloon2)
+            balloon.update(lives, balloon0, balloon1, balloon2, justcollided)
             
             for enemy in airplanes:
                 if pygame.sprite.collide_mask(enemy, balloon):
