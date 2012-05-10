@@ -316,6 +316,8 @@ def game(screen):
         birds.draw(screen)
         missiles.update()
         missiles.draw(screen)
+        powerups.update()
+        powerups.draw(screen)
             
         screen.blit(text, (0,  SCREEN_HEIGHT - 30))
         pygame.display.flip()
