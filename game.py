@@ -23,6 +23,7 @@ FPS = 40
 SCREEN_WIDTH, SCREEN_HEIGHT = 480, 800
 SCREENRECT = Rect(0, 0, 480, 800)
 
+
 def load_image(file_name):
     '''load images with exception handling'''
     try:
@@ -32,6 +33,7 @@ def load_image(file_name):
         raise SystemExit, message
     return image.convert_alpha()
     
+
 class Background (pygame.sprite.Sprite):
     def __init__(self, screen, speed, image_file):
         pygame.sprite.Sprite.__init__(self)
@@ -75,15 +77,15 @@ class Balloon (pygame.sprite.Sprite):
         
         self.lives = lives
         
-    def update(self, lives):
+    def update(self, lives, img1, img2, img3):
         '''update the balloon and check to make sure it hasn't moved off the screen'''
         self.lives = lives
         if lives > 7:
-            self.image = pygame.transform.scale (load_image('assets/balloon.png'), (132, 200))
+            self.image = img1
         if lives <= 7 and  lives >3:
-            self.image = pygame.transform.scale (load_image('assets/balloon1.png'), (132, 200))
+            self.image = img2
         if lives <= 3:
-            self.image = pygame.transform.scale (load_image('assets/balloon2.png'), (132, 200))
+            self.image = img3
         if ((self.x + self.dx) <= 0):
             self.dx = self.dx * -1
         if ((self.x + self.dx) >= self.screen.get_size()[0]):
@@ -162,6 +164,11 @@ def game(screen):
     scroll_speed = 3
     
     sky_image = "assets/sky.gif"
+    balloon0 = pygame.transform.scale (load_image('assets/balloon.png'), (132, 200))
+    balloon1 = pygame.transform.scale (load_image('assets/balloon1.png'), (132, 200))
+    balloon2 = pygame.transform.scale (load_image('assets/balloon2.png'), (132, 200))
+    balloonflashing = pygame.transform.scale (load_image('assets/balloonflash.png'), (132, 200))
+    
     font = pygame.font.Font("assets/freesansbold.ttf", 30)
     try:
         mixer.music.load("assets/Scores.ogg")
@@ -302,7 +309,7 @@ def game(screen):
             balloon.dy = 0
             sky.scrolling = True
         if justcollided <= 0:
-            balloon.update(lives)
+            balloon.update(lives, balloon0, balloon1, balloon2)
             
             for enemy in airplanes:
                 if pygame.sprite.collide_mask(enemy, balloon):
@@ -354,7 +361,7 @@ def game(screen):
                     powerup.kill()
                     score += 10
         else:
-           balloon.image = pygame.transform.scale (load_image('assets/balloonflash.png'), (132, 200))
+           balloon.image = balloonflashing
            imagechanged = True
         airplanes.update()
         airplanes.draw(screen)
