@@ -55,6 +55,10 @@ class Background (pygame.sprite.Sprite):
             self.rect.bottom += self.dy
         if self.rect.top >= 0:
             self.rect.bottom = SCREEN_HEIGHT
+        if self.dy < 0:
+            if self.rect.bottom <= SCREEN_HEIGHT:
+                self.rect.top = 0
+                #if self.rect.top > 0:            
             
     def draw(self):
         self.screen.blit(self.image, self.rect)
@@ -330,7 +334,7 @@ def game(screen):
         if timer <= 20 and timer >= 0:
             sky.dy = 6
         elif timer > 45:
-            sky.dy = -12
+           sky.dy = -6
         else:
             sky.dy = 3
         
