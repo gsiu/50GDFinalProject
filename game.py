@@ -207,6 +207,7 @@ def game(screen):
         
         text = font.render("Score: " + str(score), 1, (0, 0, 0)) #render score
         
+        timer -= 1
         
         if android:
             balloon_move = android.accelerometer_reading()
@@ -217,8 +218,10 @@ def game(screen):
             else:
                 balloon.x -= 1
             if balloon.y >=0 and balloon.y <= SCREEN_HEIGHT - balloon.image_h:
-                balloon.y = balloon.y + (balloon_move[1] * moveRate)
-            elif balloon.y <= 0:
+                balloon.y = balloon.y + ((balloon_move[1] - 5) * moveRate)
+            elif balloon.y >= SCREEN_HEIGHT:
+                balloon.y -= 1
+            else:
                 balloon.y += 1
             
                     
