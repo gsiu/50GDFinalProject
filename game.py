@@ -237,7 +237,7 @@ def game(screen):
                 balloon.x += 1
             else:
                 balloon.x -= 1
-            if balloon.rect.bottom <= SCREEN_HEIGHT and balloon.y >= (SCREEN_HEIGHT - balloon.image_h)/2:
+            if balloon.rect.bottom <= SCREEN_HEIGHT and balloon.y >= (SCREEN_HEIGHT - balloon.image_h)/3:
                 balloon.y = balloon.y + ((balloon_move[1] - 5) * moveRate)
             elif balloon.rect.bottom >= SCREEN_HEIGHT:
                 balloon.y -= 1
