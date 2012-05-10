@@ -181,7 +181,7 @@ def game(screen):
     pygame.time.set_timer(USEREVENT + 1, 3000)
     pygame.time.set_timer(USEREVENT + 2, 2000)
     pygame.time.set_timer(USEREVENT + 3, 4000)
-    pygame.time.set_timer(USEREVENT + 4, 2000)
+    pygame.time.set_timer(USEREVENT + 4, 5000)
     pygame.time.set_timer(USEREVENT + 5, 8000)
     
     pygame.key.set_repeat(FPS, FPS) # set key repeat on 
@@ -200,6 +200,8 @@ def game(screen):
     
     timer = 0
     
+    justcollided = 0
+    
     while True:
         #game loop
         time_passed = clock.tick(FPS)
@@ -208,6 +210,7 @@ def game(screen):
         text = font.render("Score: " + str(score), 1, (0, 0, 0)) #render score
         
         timer -= 1
+        justcollided -= 1
         
         if android:
             balloon_move = android.accelerometer_reading()
@@ -217,9 +220,9 @@ def game(screen):
                 balloon.x += 1
             else:
                 balloon.x -= 1
-            if balloon.y >=0 and balloon.y <= SCREEN_HEIGHT - balloon.image_h:
+            if balloon.rect.bottom <= SCREEN_HEIGHT and balloon.y >= (SCREEN_HEIGHT - balloon.image_h)/2:
                 balloon.y = balloon.y + ((balloon_move[1] - 5) * moveRate)
-            elif balloon.y >= SCREEN_HEIGHT:
+            elif balloon.rect.bottom >= SCREEN_HEIGHT:
                 balloon.y -= 1
             else:
                 balloon.y += 1
@@ -265,15 +268,17 @@ def game(screen):
             elif event.type == USEREVENT + 3 and score>=5:
                 birds.add(Enemy(screen, init_x, randint(-50, SCREEN_HEIGHT + 50), randint(2,4), 0, "assets/balloon.gif", (80, 80), 1, 1))
                 if score >=20 and score<40:
-                    missiles.add(Enemy(screen, randint(0, SCREEN_WIDTH), SCREEN_HEIGHT, 0, randint(-8, -3), "assets/missile.png", (15, 50), 1, 1))
+                    missiles.add(Enemy(screen, randint(0, SCREEN_WIDTH), SCREEN_HEIGHT, 0, randint(-8, -3), "assets/missile.png", (40, 150), 1, 1))
             elif event.type == USEREVENT + 4 and score>=50:
-                missiles.add(Enemy(screen, randint(0, SCREEN_WIDTH), SCREEN_HEIGHT, 0, randint(-8, -3), "assets/missile.png", (15, 50), 1, 1))
+                missiles.add(Enemy(screen, randint(0, SCREEN_WIDTH), SCREEN_HEIGHT, 0, randint(-8, -3), "assets/missile.png", (40, 150), 1, 1))
         
             elif event.type == USEREVENT + 5 and score>=30:
                 powerups.add(Enemy(screen, randint(100, SCREEN_WIDTH-100), 0, 0, 3, "assets/balloon.gif", (80, 80), 1, 1))
  
-        if timer > 0:
+        if timer <= 20 and timer >= 0:
             sky.dy = 6
+        elif timer > 25:
+            sky.dy = -6
         else:
             sky.dy = 3
         
@@ -286,32 +291,46 @@ def game(screen):
         if balloon.y <= SCREEN_HEIGHT / 3:
             balloon.dy = 0
             sky.scrolling = True
-        
-        for enemy in airplanes:
-            if pygame.sprite.collide_mask(enemy, balloon):
-                # ADD GAME OVER SCREEN HERE
-                if android:
-                    android.vibrate(1)
-                #return score
-            
-        for bird in birds:
-            bird.dy = 6*cos(0.1*elapsed_time) + 1
-            if pygame.sprite.collide_mask(bird, balloon):
-                # ADD GAME OVER SCREEN HERE
-                if android:
-                    android.vibrate(1)
-                #return score
-            
-        for missile in missiles:
-            if pygame.sprite.collide_mask(missile, balloon):
-                # ADD GAME OVER SCREEN HERE
-                if android:
-                    android.vibrate(1)
-                #return score
+        if justcollided <= 0:
+            for enemy in airplanes:
+                if pygame.sprite.collide_mask(enemy, balloon):
+                    # ADD GAME OVER SCREEN HERE
+                    if android:
+                        android.vibrate(0.3)
+                        #return score
+                    enemy.dy = 20
+                    timer = 40
+                    score -= 10
+                    justcollided = 20
                 
-        for powerup in powerups:
-            if pygame.sprite.collide_mask(powerup, balloon):
-                timer = 10
+            for bird in birds:
+                if bird.dy != 20:
+                    bird.dy = 6*cos(0.1*elapsed_time) + 1
+                if pygame.sprite.collide_mask(bird, balloon):
+                    # ADD GAME OVER SCREEN HERE
+                    if android:
+                        android.vibrate(0.3)
+                    #return score
+                    bird.dy = 20
+                    timer = 30
+                    score -= 5
+                    justcollided = 20
+                
+            for missile in missiles:
+                if pygame.sprite.collide_mask(missile, balloon):
+                    # ADD GAME OVER SCREEN HERE
+                    if android:
+                        android.vibrate(0.1)
+                    missile.dy = 20
+                    #return score
+                    timer = 40
+                    score -= 15
+                    justcollided = 20
+                    
+            for powerup in powerups:
+                if pygame.sprite.collide_mask(powerup, balloon):
+                    timer = 30
+                    powerup.kill()
             
         airplanes.update()
         airplanes.draw(screen)
