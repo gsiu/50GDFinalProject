@@ -110,7 +110,7 @@ def title(screen):
     exited_image = "assets/exit_pressed.png"
     font = pygame.font.Font("assets/freesansbold.ttf", 30)
     try:
-        mixer.music.load("assets/Scores.ogg")
+        mixer.music.load("assets/menu.ogg")
         mixer.music.play(-1)
     except pygame.error:
         print "Couldn't find file."
