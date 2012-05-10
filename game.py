@@ -176,17 +176,8 @@ class Enemy(pygame.sprite.Sprite):
         if score > 3:
             self.juststarted = False
         
-        
-       # if self.y >= SCREEN_SIZE -800 :
-        #    self.dy = -2
-        
-            
-        
         self.x += 0
         self.y += self.dy
-        print str(self.y)
-        print str(score)
-        print str(SCREEN_SIZE)
         self.rect.topleft = (self.x, self.y)
         
     
@@ -325,7 +316,7 @@ def game(screen):
                 airplanes.add(Enemy(screen, init_x, randint(-50, 200), randint(1, 5), randint(3, 5), enemy_image, (100, 50), 1, 1))
                 
             elif event.type == USEREVENT + 3 and score>=5:
-                birds.add(Enemy(screen, init_x, randint(-50, SCREEN_HEIGHT + 50), randint(2,4), 0, "assets/balloon.gif", (80, 80), 1, 1))
+                birds.add(Enemy(screen, init_x, randint(-50, SCREEN_HEIGHT + 50), randint(2,4), 0, "assets/UFO.png", (100, 80), 1, 1))
                 if score >=20 and score<40:
                     missiles.add(Enemy(screen, randint(0, SCREEN_WIDTH), SCREEN_HEIGHT, 0, randint(-8, -3), "assets/missile.png", (40, 150), 1, 1))
             elif event.type == USEREVENT + 4 and score>=50:
